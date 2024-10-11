@@ -9,13 +9,13 @@
 (с поправкой на долготу) и отфильтровывать наименее яркие объекты
 (с поправкой на световое загрязнение крупных городов).
 
-Небесное тело: небесные координаты;
+1. Небесное тело: небесные координаты;
 видимая звёздная величина.
 
-Система: несколько небесных тел,
+2. Система: несколько небесных тел,
 связанных гравитационно.
 
-Карта звёздного неба 
+3. Карта звёздного неба 
 (массив звёзд и других небесных тел),
 класс которой включает следующие методы:
 1) метод, принимающий значение угла
@@ -33,12 +33,16 @@
 
 
 int main() {
-    Star star1(10, 50, 1);
+    Star star1(20, 50, 1, "Star1");
     Star star2(star1);
+    star2.setName("Star2");
     star1.rotate(10);
-    star2.rotate(20);
+    star2.rotate(360);
+
+    assert(star1.getName() == "Star1"); 
+    assert(star2.getName() == "Star2"); 
     assert(star1.getCoordinates().hour_angle == 60);
-    assert(star2.getCoordinates().hour_angle == 70);
+    assert(star2.getCoordinates().hour_angle == 50);
     
     std::cout << "All tests passed" << std::endl;
     return 0;
