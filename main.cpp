@@ -39,10 +39,17 @@ int main() {
     star1.rotate(10);
     star2.rotate(360);
 
+    assert(star1.getBrightness() == 1);
+    assert(star2.getBrightness() == 1);
+
     assert(star1.getName() == "Star1"); 
     assert(star2.getName() == "Star2"); 
+
     assert(star1.getCoordinates().hour_angle == 60);
     assert(star2.getCoordinates().hour_angle == 50);
+
+    assert(star1.getCoordinates().declination == 20);
+    assert(star2.getCoordinates().declination == 20);
     
     std::cout << "All tests passed" << std::endl;
     return 0;

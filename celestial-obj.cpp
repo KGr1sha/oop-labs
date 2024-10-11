@@ -61,5 +61,5 @@ void Star::printInfo() const {
     std::cout << "Coordinates:" << std::endl;
     std::cout << "Declination: " << _coordinates.declination << std::endl;
     std::cout << "Hour angle: " << _coordinates.hour_angle << std::endl;
-    std::cout << std::endl << "Brightness: " << _brightnes << std::endl;
+    std::cout << "Brightness: " << _brightnes << std::endl << std::endl;
 }
