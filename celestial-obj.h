@@ -13,8 +13,17 @@ struct spherical_coordinates {
     }
 };
 
+enum celestialObjetType {
+    SingleStar,
+    StarSystem
+};
+
 
 class Star {
+protected:
+    std::string _name;
+    float _brightnes; 
+    spherical_coordinates _coordinates; 
 public:
     Star();
     Star(
@@ -28,15 +37,33 @@ public:
     spherical_coordinates getCoordinates() const;
     float getBrightness() const;
     std::string getName() const;
+    virtual celestialObjetType getType() const;
 
-    void setCoordinates(spherical_coordinates coords);
+    bool setCoordinates(spherical_coordinates coords);
     void setBrightness(float brightness);
     void setName(std::string name);
 
-    void rotate(float angle);
-    void printInfo() const;
+    bool rotate(float angle);
+};
+
+class StarSystem : public Star
+{
 private:
-    std::string _name;
-    float _brightnes; 
-    spherical_coordinates _coordinates; 
+    float _gravitational_attrraction;
+
+public:
+    StarSystem();
+    StarSystem(
+        float declination,
+        float hour_angle,
+        float brightness,
+        std::string name,
+        float gravitational_attraction
+    );
+    StarSystem(StarSystem &other);
+
+    bool setGravitationalAttraction(float attraction);
+
+    float getGravitationalAttraction() const;
+    celestialObjetType getType() const override;
 };

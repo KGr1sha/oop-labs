@@ -30,27 +30,57 @@
 #include "celestial-obj.h"
 #include "assert.h"
 #include <iostream>
+#include <stdexcept>
 
 
 int main() {
-    Star star1(20, 50, 1, "Star1");
-    Star star2(star1);
-    star2.setName("Star2");
-    star1.rotate(10);
-    star2.rotate(360);
-
+    //testing default constructor
+    Star star_default;
+    assert(star_default.getName() == "New Star");
+    assert(star_default.getBrightness() == 0);
+    spherical_coordinates cords = star_default.getCoordinates();
+    assert(cords.declination == 0 && cords.hour_angle == 0);
+    //testing init contructor
+    Star star1(45, 90, 1, "Star1");
+    assert(star1.getName() == "Star1");
     assert(star1.getBrightness() == 1);
+    cords = star1.getCoordinates();
+    assert(cords.declination == 45 && cords.hour_angle == 90);
+    //testing copy contructor
+    Star star2(star1);
+    assert(star2.getName() == "Star1");
     assert(star2.getBrightness() == 1);
+    cords = star2.getCoordinates();
+    assert(cords.declination == 45 && cords.hour_angle == 90);
 
-    assert(star1.getName() == "Star1"); 
-    assert(star2.getName() == "Star2"); 
+    //testing setters
+    star2.setName("Star2");
+    assert(star2.getName() == "Star2");
+    star2.setBrightness(3);
+    assert(star2.getBrightness() == 3);
+    cords = spherical_coordinates(90, 500);
+    try {
+        star2.setCoordinates(cords);
+    } catch (std::invalid_argument &e) {
+        std::cerr << e.what() << "(intended)" << std::endl; 
+    }
+    cords = star2.getCoordinates();
+    assert(cords.declination == 45 && cords.hour_angle == 90);
 
-    assert(star1.getCoordinates().hour_angle == 60);
-    assert(star2.getCoordinates().hour_angle == 50);
+    cords = spherical_coordinates(30, 330);
+    star2.setCoordinates(cords);
+    cords = star2.getCoordinates();
+    assert(cords.declination == 30 && cords.hour_angle == 330);
+    //testing rotate method
+    try {
+        star2.rotate(370);
+    } catch(std::invalid_argument &e) {
+        std::cerr << e.what() << "(intended)" << std::endl;
+    }
+    assert(star2.getCoordinates().hour_angle == 330);
+    star2.rotate(30);
+    assert(star2.getCoordinates().hour_angle == 360);
 
-    assert(star1.getCoordinates().declination == 20);
-    assert(star2.getCoordinates().declination == 20);
-    
     std::cout << "All tests passed" << std::endl;
     return 0;
 }
