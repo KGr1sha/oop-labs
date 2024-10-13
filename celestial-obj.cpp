@@ -46,7 +46,7 @@ void Star::setBrightness(float brightness) {
 bool Star::setCoordinates(spherical_coordinates coords) {
     if (coords.declination > 90 || coords.declination < -90\
     || coords.hour_angle < 0 || coords.hour_angle > 360) {
-        throw std::invalid_argument("Argument out of range");
+        throw std::invalid_argument("ERROR: argument out of range");
         return false;
     }
 
@@ -59,8 +59,8 @@ void Star::setName(std::string name) {
 }
 
 bool Star::rotate(float angle) {
-    if (angle > 360) {
-        throw std::invalid_argument("Argument out of range");
+    if (angle > 360 || angle < -360) {
+        throw std::invalid_argument("ERROR: angle shoud be between -360 and 360");
         return false;
     }
 
@@ -68,7 +68,42 @@ bool Star::rotate(float angle) {
     if (_coordinates.hour_angle > 360) {
         _coordinates.hour_angle -= 360;
     }
+    if (_coordinates.hour_angle < 0) {
+        _coordinates.hour_angle += 360;
+    }
     return true;
+}
+
+
+StarSystem::StarSystem() : Star() {
+    _gravitational_attrraction = 0;
+}
+
+StarSystem::StarSystem(
+    float declination,
+    float hour_angle,
+    float brightness,
+    std::string name,
+    float gravitational_attraction
+) : Star(declination, hour_angle, brightness, name) {
+    setGravitationalAttraction(gravitational_attraction);
+}
+
+StarSystem::StarSystem(StarSystem &other) : Star(other){
+    _gravitational_attrraction = other._gravitational_attrraction;
+}
+
+bool StarSystem::setGravitationalAttraction(float attraction) {
+    if (attraction <= 0) {
+        throw std::invalid_argument("ERROR: attraction should be positive");
+        return false;
+    }
+    _gravitational_attrraction = attraction;
+    return true;
+}
+
+float StarSystem::getGravitationalAttraction() const {
+    return _gravitational_attrraction;
 }
 
 celestialObjetType StarSystem::getType() const {

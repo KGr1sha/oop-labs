@@ -32,19 +32,22 @@
 #include <iostream>
 #include <stdexcept>
 
+void testStarForDefaultValues(Star &star) {
+    assert(star.getName() == "New Star");
+    assert(star.getBrightness() == 0);
+    spherical_coordinates cords = star.getCoordinates();
+    assert(cords.declination == 0 && cords.hour_angle == 0);
+}
 
-int main() {
+Star testStarConstructors() {
     //testing default constructor
     Star star_default;
-    assert(star_default.getName() == "New Star");
-    assert(star_default.getBrightness() == 0);
-    spherical_coordinates cords = star_default.getCoordinates();
-    assert(cords.declination == 0 && cords.hour_angle == 0);
+    testStarForDefaultValues(star_default);    
     //testing init contructor
     Star star1(45, 90, 1, "Star1");
     assert(star1.getName() == "Star1");
     assert(star1.getBrightness() == 1);
-    cords = star1.getCoordinates();
+    spherical_coordinates cords = star1.getCoordinates();
     assert(cords.declination == 45 && cords.hour_angle == 90);
     //testing copy contructor
     Star star2(star1);
@@ -52,35 +55,79 @@ int main() {
     assert(star2.getBrightness() == 1);
     cords = star2.getCoordinates();
     assert(cords.declination == 45 && cords.hour_angle == 90);
+    return star2;
+}
 
-    //testing setters
-    star2.setName("Star2");
-    assert(star2.getName() == "Star2");
-    star2.setBrightness(3);
-    assert(star2.getBrightness() == 3);
+
+void testStarSetters(Star &star) {
+    spherical_coordinates initialCords = star.getCoordinates();
+    spherical_coordinates cords;
+    star.setName("Star2");
+    assert(star.getName() == "Star2");
+    star.setBrightness(3);
+    assert(star.getBrightness() == 3);
     cords = spherical_coordinates(90, 500);
     try {
-        star2.setCoordinates(cords);
+        star.setCoordinates(cords);
     } catch (std::invalid_argument &e) {
         std::cerr << e.what() << "(intended)" << std::endl; 
     }
-    cords = star2.getCoordinates();
-    assert(cords.declination == 45 && cords.hour_angle == 90);
+    cords = star.getCoordinates();
+    assert(
+        cords.hour_angle == initialCords.hour_angle\
+        && cords.declination == initialCords.declination
+    );
 
     cords = spherical_coordinates(30, 330);
-    star2.setCoordinates(cords);
-    cords = star2.getCoordinates();
+    star.setCoordinates(cords);
+    cords = star.getCoordinates();
     assert(cords.declination == 30 && cords.hour_angle == 330);
-    //testing rotate method
+}
+
+void testRotate(Star &star) {
+    spherical_coordinates cords(30, 330);
+    star.setCoordinates(cords);
     try {
-        star2.rotate(370);
+        star.rotate(370);
     } catch(std::invalid_argument &e) {
         std::cerr << e.what() << "(intended)" << std::endl;
     }
-    assert(star2.getCoordinates().hour_angle == 330);
-    star2.rotate(30);
-    assert(star2.getCoordinates().hour_angle == 360);
+    star.rotate(30);
+    assert(star.getCoordinates().hour_angle == 360);
+}
 
-    std::cout << "All tests passed" << std::endl;
+
+void testSystemForDefaultValuse(class StarSystem &system) {
+    testStarForDefaultValues(system);
+    assert(system.getGravitationalAttraction() == 0);
+}
+
+
+int main() {
+    Star star = testStarConstructors();
+    testStarSetters(star);
+    testRotate(star);
+    assert(star.getType() == celestialObjetType::SingleStar);
+    std::cout << "Lab1 tests passed" << std::endl;
+
+    //testing defaulst constructor
+    class StarSystem system_default;
+    testSystemForDefaultValuse(system_default);
+    //testing init constructor
+    class StarSystem system1(45, 90, 1, "system1", 10);
+    assert(system1.getGravitationalAttraction() == 10);
+
+    try {
+        system1.setGravitationalAttraction(-1);
+    } catch(std::invalid_argument &e){
+        std::cerr << e.what() << "(intended)" << std::endl;
+    }
+
+    system1.setGravitationalAttraction(1);
+    assert(system1.getGravitationalAttraction() == 1);
+
+    assert(system1.getType() == celestialObjetType::StarSystem);
+    std::cout << "Lab2 tests passed" << std::endl;
+    
     return 0;
 }
